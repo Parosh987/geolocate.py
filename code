@@ -1,0 +1,40 @@
+import requests
+
+
+def geolocate():
+    print("=== Geolocator ===")
+    ip = input("Enter IP Address: ").strip()
+
+    if not ip:
+        print("[-] No IP entered, exiting.")
+        return
+
+    url = f"https://ipinfo.io/{ip}/json"
+
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        ip_info = response.json()
+
+        print("\n[+] Request Successful!\n")
+        print(f"IP Address  : {ip}")
+        print(f"Country     : {ip_info.get('country', 'N/A')}")
+        print(f"Region      : {ip_info.get('region', 'N/A')}")
+        print(f"City        : {ip_info.get('city', 'N/A')}")
+        print(f"Coordinates : {ip_info.get('loc', 'N/A')}")
+        print(f"Postal Code : {ip_info.get('postal', 'N/A')}")
+        print(f"ASN / Org   : {ip_info.get('org', 'N/A')}")
+        print(f"Timezone    : {ip_info.get('timezone', 'N/A')}")
+
+        # Show Google Maps link if coordinates exist
+        loc = ip_info.get("loc")
+        if loc and "," in loc:
+            lat, lon = loc.split(",")
+            print(f"Google Maps : https://www.google.com/maps/?q={lat},{lon}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"[!] Error: {e}")
+
+
+if __name__ == "__main__":
+    geolocate()
